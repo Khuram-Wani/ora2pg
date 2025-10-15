@@ -1028,7 +1028,7 @@ sub _lookup_function
 		$fct_detail{type} = 'PROCEDURE' if ($fct_detail{type} eq 'PROC');
 		$type = lc($fct_detail{type} . 's');
 		$tmp_returned =~ s/RETURNS\s+DECLARE/RETURNS /is;
-		if ($tmp_returned =~ s/\s+AS\s+(DECLARE.*)//is) {
+		if ($tmp_returned =~ s/\bAS\s*\n*\s*(\bDECLARE\b.*)//is) {
 			$fct_detail{declare} .= "$1\n";
 		}
 		$tmp_returned =~ s/RETURNS\s+(.*)\s+AS\s+.*/$1/is;
