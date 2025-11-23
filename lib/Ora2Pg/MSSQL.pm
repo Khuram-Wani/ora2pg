@@ -967,10 +967,20 @@ sub _lookup_function
         my %fct_detail = ();
         $fct_detail{func_ret_type} = 'OPAQUE';
 
-	my @code = ();
-        # Split data into declarative and code part
-        ($fct_detail{declare}, @code) = split(/\b(BEGIN|SET|SELECT|INSERT|UPDATE|IF)\b/i, $code, 3);
-	$fct_detail{code} = join(' ', @code);
+    # Split data into declarative and code part
+    # In T-SQL, AS keyword is more reliable than splitting on individual keywords 
+
+    if ($code =~ /(.*?\bAS\s+)(.*)/is) {
+        $fct_detail{declare} = $1;
+        $fct_detail{code}    = $2;
+    }
+    else
+    {
+        # Fallback: if AS is not found, split on common keywords (for compatibility with non-standard formats)
+        my @code_parts = split(/\b(BEGIN|SET|SELECT|INSERT|UPDATE|DELETE|MERGE|TRUNCATE|IF)\b/i, $code, 3);
+        $fct_detail{declare} = shift(@code_parts);
+        $fct_detail{code} = join('', @code_parts);
+    }
 	return if (!$fct_detail{code});
 
 	# Look for table variables in code and rewrite them as temporary tables
