@@ -1230,7 +1230,7 @@ sub replace_mssql_variables
 
 	# Fix other call to the same variable in the code
 	foreach my $n (@to_be_replaced) {
-		$code =~ s/\@$n\b/v_$n/gs;
+		$code =~ s/\@$n\b/v_$n/igs;
 	}
 
 	# Look for variable definition in DECLARE section and rename them in the code too
@@ -1238,7 +1238,7 @@ sub replace_mssql_variables
 	{
 		my $n = $2;
 		# Fix other call to the same variable in the code
-		$code =~ s/\@$n\b/v_$n/gs;
+		$code =~ s/\@$n\b/v_$n/igs;
 	}
 
 	# Look for some global variable definition and append them to the declare section
@@ -1275,7 +1275,7 @@ sub replace_mssql_variables
 		} 
 		$declare .= "v_$n $type;\n" if ($declare !~ /v_$n ($type|record);/is);
 		# Fix other call to the same variable in the code
-		$code =~ s/\@$n\b/v_$n/gs;
+		$code =~ s/\@$n\b/v_$n/igs;
 	}
 
 	# Look for variable definition with SELECT statement
